@@ -2,68 +2,385 @@
 title: API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
-  - javascript
+  - json
+  - php
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='http://www.brasilbookings.com.br'>Sign Up for a Developer Key</a>
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
   - errors
 
-search: true
+search: false
 ---
 
-# Introduction
+# Introdução
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Bem-vindo(a) a API do Brasil Bookings!
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+# Autenticação
 
-# Authentication
+> Para autenticação utilize o seguinte código:
 
-> To authorize, use this code:
-
-```ruby
+```php
 require 'kittn'
 
 api = Kittn::APIClient.authorize!('meowmeowmeow')
 ```
 
-```python
-import kittn
+> Você deve substituir `MINHAAPIKEY` por sua API Key.
 
-api = kittn.authorize('meowmeowmeow')
-```
+A API do Brasil Bookings utiliza API Keys para autorizar o acesso à API.
+A API Key deve ser informada em todos os requests ao servidor, no header da requisição, conforme o exemplo a seguir:
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+`X-API-KEY: MINHAAPIKEY`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+Você deve substituir <code>MINHAAPIKEY</code> com a sua API key exclusiva.
 </aside>
+
+# Tipos de Quarto
+
+Através da rota `/rooms_api/rooms` e suas derivadas, você pode retornar os dados básicos dos tipos de quartos existentes.
+
+## Objeto `rooms_api/rooms`
+
+> Objeto rooms_api/rooms
+
+```json
+{
+  "RoomsRS": {
+    "0": "Rooms",
+    "Rooms": {
+      "Success": "",
+      "HotelCode": "1",
+      "0": {
+        "ID": "1",
+        "Title": "Quarto 1",
+        "Adults": "3",
+        "Children": "2"
+      },
+      "1": {
+        "ID": "2",
+        "Title": "Quarto 2",
+        "Adults": "2",
+        "Children": "0"
+      },
+      "2": {
+        "ID": "3",
+        "Title": "Quarto 3",
+        "Adults": "4",
+        "Children": "0"
+      },
+      "3": {
+        "ID": "4",
+        "Title": "Quarto 4",
+        "Adults": "5",
+        "Children": "0"
+      }
+    }
+  }
+}
+```
+
+Ao consultar este método, este será o objeto que você irá receber como resposta.
+
+Propriedade | Descrição
+-----------: | ---------
+**HotelCode** <br>string | Código do hotel no Brasil Bookings
+**ID** <br>integer | ID do Quarto no Brasil Bookings
+**Title** <br>string | Título do quarto
+**Adults** <br>integer | Quantidade máxima de hóspedes adultos do quarto
+**Children** <br>integer | Quantidade máxima de hóspedes crianças do quarto
+
+# Tipos de Tarifa
+
+Através da rota `/rate_plans_api/rate_plans` e suas derivadas, você pode retornar os dados básicos dos tipos de tarifas existentes.
+
+## Objeto `rate_plans_api/rate_plans`
+
+> Objeto rate_plans_api/rate_plans
+
+```json
+{
+  "RatePlansRS": {
+    "0": "Rates",
+    "Rates": {
+      "Success": "",
+      "HotelCode": "1",
+      "0": {
+        "ID": "150",
+        "Name": "Tarifa Padrão"
+      },
+      "1": {
+        "ID": "151",
+        "Name": "Tarifa Corporativa"
+      }
+    }
+  }
+}
+```
+
+Ao consultar este método, este será o objeto que você irá receber como resposta.
+
+Propriedade | Descrição
+-----------: | ---------
+**HotelCode** <br>string | Código do hotel no Brasil Bookings
+**ID** <br>integer | ID do Quarto no Brasil Bookings
+**Name** <br>string | Nome do tipo de tarifa
+
+# Atulizar Disponibilidade
+
+Através da rota `/rate_plans_api/update_availability`, você pode atualizar a disponibilidade dos quartos por período.
+
+## Atualizando disponibilidades
+
+> POST
+
+```json
+{
+  "AvailabilityRQ": {
+    "AvailStatusMessages": {
+      "HotelCode": "1",
+      "AvailStatusMessage": [
+        {
+          "BookingLimit": "14",
+          "StatusApplicationControl": {
+            "Start": "2016-11-20",
+            "End": "2016-11-21",
+            "InvCode": "1"
+          }
+        },
+        {
+          "BookingLimit": "14",
+          "StatusApplicationControl": {
+            "Start": "2016-11-21",
+            "End": "2016-11-22",
+            "InvCode": "1"
+          }
+        },
+        {
+          "BookingLimit": "14",
+          "StatusApplicationControl": {
+            "Start": "2016-11-22",
+            "End": "2016-11-23",
+            "InvCode": "2"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+> RESPONSE
+
+```json
+{
+  "AvailabilityRS": {
+    "Success": ""
+  }
+}
+```
+
+Propriedade | Descrição
+-----------: | ---------
+**HotelCode** <br>string | Código do hotel no Brasil Bookings
+**BookingLimit** <br>integer | Quantidade de unidades disponíveis para o quarto
+**Start** <br>string | Data de início da disponibilidade
+**End** <br>string | Data final da disponibilidade
+**InvCode** <br>string | ID do tipo de quarto no Brasil Bookings
+
+# Atualizar Tarifas
+
+Através da rota `/rates_api/update_rates`, você pode atualizar as tarifas dos quartos por período e número de ocupantes.
+
+## Atualizando tarifas
+
+> POST
+
+```json
+{
+  "RatesRQ": {
+    "RatePlans": {
+      "HotelCode": "1",
+      "RatePlan": {
+        "RatePlanCode": "1",
+        "Rates": {
+          "Rate": [
+            {
+              "Start": "2016-11-28",
+              "End": "2016-11-29",
+              "InvCode": "1",
+              "BaseByGuestAmts": {
+                "BaseByGuestAmt": [
+                  {
+                    "Amount": "150.00",
+                    "NumberOfGuests": "1"
+                  },
+                  {
+                    "Amount": "20.00",
+                    "NumberOfGuests": "2"
+                  },
+                  {
+                    "Amount": "30.00",
+                    "NumberOfGuests": "3"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+> RESPONSE
+
+```json
+{
+  "RatesRS": {
+    "Success": ""
+  }
+}
+```
+
+Propriedade | Descrição
+-----------: | ---------
+**HotelCode** <br>string | Código do hotel no Brasil Bookings
+**RatePlanCode** <br>integer | ID do tipo de tarifa
+**Start** <br>string | Data de início da disponibilidade
+**End** <br>string | Data final da disponibilidade
+**InvCode** <br>string | ID do tipo de quarto no Brasil Bookings
+**Amount** <br>float | Valor da tarifa
+**NumberOfGuests** <br>integer | Número de ocupantes da tarifa
+
+# Atualizar Restrições e Estadia Mínima
+
+Através da rota `/restrictions_api/update_restrictions`, você pode atualizar as restrições e estadias mínimas dos quartos por período e tipo de tarifa.
+
+> POST
+
+```json
+{
+  "RestrictionsRQ": {
+    "AvailStatusMessages": {
+      "HotelCode": "1",
+      "AvailStatusMessage": [
+        {
+          "StatusApplicationControl": {
+            "Start": "2016-11-02",
+            "End": "2016-11-03",
+            "RatePlanCode": "1",
+            "InvCode": "1"
+          },
+          "LengthsOfStay": {
+            "LengthOfStay": {
+              "Time": "3",
+              "TimeUnit": "Day",
+              "MinMaxMessageType": "MinLOS"
+            }
+          }
+        },
+        {
+          "StatusApplicationControl": {
+            "Start": "2016-11-02",
+            "End": "2016-11-03",
+            "RatePlanCode": "1",
+            "InvCode": "1"
+          },
+          "RestrictionStatus": [{
+              "Restriction": "Arrival",
+              "Status": "Open"
+            },
+            {
+              "Restriction": "Departure",
+              "Status": "Open"
+            }
+		   ]
+        }
+      ]
+    }
+  }
+}
+```
+
+> RESPONSE
+
+```json
+{
+  "RestrictionsRS": {
+    "Success": ""
+  }
+}
+```
+
+# Bloqueio/Desbloqueio de Tarifas
+
+Através da rota `/block_rates_api/block_rates`, você pode bloquear ou desbloquear tarifas por período.
+
+> POST
+
+```json
+{
+  "BlockRateRQ": {
+    "AvailStatusMessages": {
+      "HotelCode": "1",
+      "AvailStatusMessage": [
+        {
+          "StatusApplicationControl": {
+            "Start": "2016-11-20",
+            "End": "2016-11-21",
+            "RatePlanCode": "1",
+            "InvCode": "1"
+          },
+          "RestrictionStatus": { "Status": "Close" }
+        },
+        {
+          "StatusApplicationControl": {
+            "Start": "2016-11-21",
+            "End": "2016-11-22",
+            "RatePlanCode": "1",
+            "InvCode": "1"
+          },
+          "RestrictionStatus": { "Status": "Open" }
+        }
+      ]
+    }
+  }
+}
+```
+
+> RESPONSE
+
+```json
+{
+  "BlockRateRS": {
+    "Success": ""
+  }
+}
+```
+
+<!--
+# Reservas
+
+Através da rota `/reservations_api/reservations`, retornar as reservas feitas no Brasil Bookings.
+
+> POST
+
+```json
+
+```
+
+> RESPONSE
+
+```json
+
+```
 
 # Kittens
 
@@ -186,4 +503,6 @@ This endpoint retrieves a specific kitten.
 Parameter | Description
 --------- | -----------
 ID | The ID of the kitten to retrieve
+
+-->
 
